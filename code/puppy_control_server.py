@@ -10,6 +10,7 @@ import threading
 import websockets
 from std_srvs.srv import SetBool
 from puppy_control.msg import Velocity, Pose, Gait
+import action_test as ActionHandler
 ROS_NODE_NAME = 'puppy_control_server'
 
 
@@ -54,7 +55,21 @@ async def command_handler(websocket):
             rospy.loginfo(f"Received key command: {key}")
             
 
-            if key == 'w':
+            if key == 'bow':
+                ActionHandler.change_action_value("bow.d6ac", 1)
+            elif key == "lie_down":
+                ActionHandler.change_action_value("lie_down.d6ac", 1)
+            elif key == "moonwalk":
+                ActionHandler.change_action_value("moonwalk.d6ac", 1)
+            elif key == "nod":
+                ActionHandler.change_action_value("nod.d6ac", 1)
+            elif key == "spacewalk":
+                ActionHandler.change_action_value("spacewalk.d6ac", 1)
+            elif key == "stand":
+                ActionHandler.change_action_value("stand.d6ac", 1)
+            elif key == "push-up":
+                Actionhandler.change_action_value("push-up.d6ac", 1)
+            elif key == 'w':
                 PuppyMove.update({'x': 10, 'y': 0, 'yaw_rate': 0})
             elif key == 's':
                 PuppyMove.update({'x': -10, 'y': 0, 'yaw_rate': 0})
@@ -106,6 +121,9 @@ if __name__ == '__main__':
     PuppyGaitConfigPub = rospy.Publisher('/puppy_control/gait', Gait, queue_size=1)
     PuppyVelocityPub = rospy.Publisher('/puppy_control/velocity', Velocity, queue_size=1)
     set_mark_time_srv = rospy.ServiceProxy('/puppy_control/set_mark_time', SetBool)
+    
+    # start acction group thread
+    ActionHandler.start_action_thread()
     
     
     # Send initial setup messages
